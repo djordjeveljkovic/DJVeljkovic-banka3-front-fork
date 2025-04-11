@@ -55,6 +55,11 @@ export class AccountService {
       );
   }
 
+  getAccountsForOrder(): Observable<AccountResponse[]> {
+    const headers = this.getAuthHeaders().set('Accept', '*/*');
+    return this.http.get<AccountResponse[]>(`${this.apiUrl}/for-order`, { headers });
+  }
+
   getAccountDetails(accountNumber: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/details/${accountNumber}`, {
       headers: this.getAuthHeaders(),

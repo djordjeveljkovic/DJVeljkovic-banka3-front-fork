@@ -100,7 +100,7 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
     }
 
 
-    if (this.isOpen && (directionChanged || changes['isOpen']?.currentValue === true)) {
+    if (this.isOpen){ // && (directionChanged || changes['isOpen']?.currentValue === true)) {
         this.loadUserAccounts();
     }
 
@@ -120,7 +120,7 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
     this.fetchedAccountsList = [];
     this.selectedAccountId = null;
 
-    this.accountService.getMyAccountsRegular().subscribe({
+    this.accountService.getAccountsForOrder().subscribe({
       next: (response: any) => {
          this.fetchedAccountsList = Array.isArray(response) ? response : response?.content || [];
          this.accounts = this.fetchedAccountsList.map((acc: AccountResponse) => ({
@@ -195,7 +195,7 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
       this.alertService.showAlert('error', "Quantity must be positive.");
       return;
     }
-    if (!this.selectedAccountId && this.direction === 'BUY') {
+    if (!this.selectedAccountId) {
        this.alertService.showAlert('error', "Please select a source account for the purchase.");
        return;
     }
@@ -231,12 +231,7 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
         return;
     }
 
-    let accountNumberToSend: string | null = null;
-    if (this.direction === 'BUY') {
-        accountNumberToSend = this.selectedAccountId;
-    } else {
-        accountNumberToSend = this.fetchedAccountsList.length > 0 ? this.fetchedAccountsList[0].accountNumber : null;
-    }
+    let accountNumberToSend: string | null = this.selectedAccountId;
 
     if (!accountNumberToSend) {
         this.alertService.showAlert('error', `Cannot confirm order: Required account number is missing for ${this.direction} operation.`);
@@ -273,7 +268,6 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
     });
   }
 
-
   get modalTitle(): string {
     if (this.currentView === ModalView.CONFIRMATION) {
         return `${this.direction === 'BUY' ? 'Purchase' : 'Sale'} Overview`;
@@ -282,7 +276,7 @@ export class OrderCreationModalComponent implements OnInit, OnChanges {
   }
 
   get selectedAccountLabel(): string {
-      if (this.direction === 'BUY' && this.selectedAccountId) {
+      if (this.selectedAccountId) {
           const account = this.accounts.find(acc => acc.value === this.selectedAccountId);
           return account ? account.label : 'N/A';
       }

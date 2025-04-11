@@ -3,6 +3,7 @@ import { authGuard } from './guards/auth-guard.guard';
 import { clientOrActuaryGuard } from './guards/client-or-actuary-guard.guard';
 import { employeeOrAdminGuard } from './guards/employee-or-admin-guard.guard';
 import { adminGuard } from './guards/admin-guard.guard';
+import { supervisorGuard } from './guards/supervisor-guard.guard';
 import { LoginComponent } from './login/login.component';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { EmployeesComponent } from './components/employee/employees/employees.component';
@@ -40,7 +41,9 @@ import { OrderOverviewComponent } from './components/stocks/order-overview/order
 import { TaxCalculationComponent } from './components/tax-calculation/tax-calculation.component';
 import { BankAccountsComponent} from './components/account/bank-accounts/bank-accounts.component';
 import { ActuaryManagementComponent } from './components/stocks/actuary-management/actuary-management.component';
-import {supervisorGuard} from './guards/supervisor-guard.guard';
+import { SettledContractsComponent } from './components/stocks/settled-contracts/settled-contracts.component';
+import { OtcOffersListComponent } from './components/stocks/otc-offers-list/otc-offers-list.component';
+import { BankProfitComponent } from './components/stocks/bank-profit/bank-profit.component';
 
 export const routes: Routes = [
   // login
@@ -97,16 +100,22 @@ export const routes: Routes = [
   //success
   { path: 'success', component: SuccessComponent },
 
+  // actuaries
+  { path: 'actuaries', component: ActuaryManagementComponent, canActivate: [authGuard, supervisorGuard] }, // treba supervisor gard, ovako ce biti dok se ne doda u beku
+
   // securities
-  { path: 'my-portfolio', component: MyPortfolioComponent, canActivate: [authGuard, clientOrActuaryGuard] },
+  { path: 'my-portfolio', component: MyPortfolioComponent, canActivate: [authGuard] },
   { path: 'securities', component: SecuritiesComponent, canActivate: [authGuard, clientOrActuaryGuard] },
   { path: 'tax-portal', component: TaxCalculationComponent, canActivate: [authGuard, supervisorGuard] }, // not sure if this is the right guard!
 
-  //options
+  // options
   { path: 'options/:stockId', component: OptionsDisplayComponent, canActivate: [authGuard, clientOrActuaryGuard] }, // samo aktuar tj. agent
   { path: 'order-overview', component: OrderOverviewComponent, canActivate: [authGuard, supervisorGuard] }, // treba supervisor gard, ovako ce biti dok se ne doda u beku
+  { path: 'settled-contracts', component: SettledContractsComponent, canActivate: [authGuard] },
 
-  //Actuary
-  { path: 'actuaries', component: ActuaryManagementComponent, canActivate: [authGuard, supervisorGuard] } // treba supervisor gard, ovako ce biti dok se ne doda u beku
+  // otc
+  { path: 'otc-offers', component: OtcOffersListComponent, canActivate: [authGuard, clientOrActuaryGuard] },
 
+  // bank profit
+  { path: 'bank-profit', component: BankProfitComponent, canActivate: [authGuard] }
 ];
